@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /$
+Allow: /features
+Disallow: /dashboard
+Disallow: /products
+Disallow: /settings
+Disallow: /admin
+Disallow: /api
+
+Sitemap: /sitemap.xml

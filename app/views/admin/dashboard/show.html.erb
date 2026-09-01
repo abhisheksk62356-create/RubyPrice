@@ -1,0 +1,49 @@
+<% content_for :title, "Admin" %>
+
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Admin Dashboard</h1>
+
+<div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+  <% [
+    ["Total Users", @stats[:total_users]],
+    ["Total Products", @stats[:total_products]],
+    ["Total Crawl Runs", @stats[:total_crawl_runs]],
+    ["Successful Crawl Runs", @stats[:successful_crawl_runs]],
+    ["Failed Crawl Runs", @stats[:failed_crawl_runs]],
+    ["Avg Crawl Duration", @stats[:average_crawl_duration_ms].present? ? "#{@stats[:average_crawl_duration_ms]} ms" : "—"]
+  ].each do |label, value| %>
+    <div class="card p-5">
+      <p class="text-sm font-medium text-slate-500"><%= label %></p>
+      <p class="mt-2 text-3xl font-bold text-slate-900"><%= value %></p>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-10">
+  <h2 class="text-lg font-semibold text-slate-900">Recent errors</h2>
+
+  <% if @recent_errors.empty? %>
+    <p class="mt-3 text-sm text-slate-500">No failed crawl runs recorded.</p>
+  <% else %>
+    <div class="mt-4 overflow-hidden rounded-xl border border-slate-200">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <% ["Product", "URL", "Error", "When"].each do |header| %>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= header %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+          <% @recent_errors.each do |crawl_run| %>
+            <tr>
+              <td class="px-4 py-3 text-sm text-slate-900"><%= crawl_run.product&.name || "—" %></td>
+              <td class="max-w-xs truncate px-4 py-3 text-sm text-slate-500"><%= crawl_run.url %></td>
+              <td class="px-4 py-3 text-sm text-red-600"><%= crawl_run.error_code %></td>
+              <td class="px-4 py-3 text-sm text-slate-500"><%= time_ago_in_words(crawl_run.created_at) %> ago</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

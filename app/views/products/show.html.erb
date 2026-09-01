@@ -1,0 +1,120 @@
+<% content_for :title, @product.name %>
+
+<div class="flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <p class="text-sm text-slate-500"><%= @product.domain %></p>
+    <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900"><%= @product.name %></h1>
+    <p class="mt-1 text-xs text-slate-400">
+      Last checked <%= @product.last_checked_at.present? ? "#{time_ago_in_words(@product.last_checked_at)} ago" : "never" %>
+    </p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <%= link_to @product.url, target: "_blank", rel: "noopener", class: "btn-secondary" do %>
+      View on store
+    <% end %>
+    <% if @tracked_product.product_group_id.present? %>
+      <%= link_to "View comparison", product_group_path(@tracked_product.product_group), class: "btn-secondary" %>
+    <% else %>
+      <%= link_to "Compare prices", new_product_group_path(tracked_product_id: @tracked_product.id), class: "btn-secondary" %>
+    <% end %>
+    <%= button_to "Refresh price", refresh_product_path(@product), method: :post, class: "btn-primary bg-transparent p-0" %>
+    <%= button_to "Remove", product_path(@product), method: :delete, form: { data: { turbo_confirm: "Remove this product from your tracked list?" } }, class: "btn-danger bg-transparent p-0" %>
+  </div>
+</div>
+
+<% if @latest_crawl_run&.status.in?(%w[pending running]) %>
+  <div class="mt-6 flex items-center gap-3 rounded-lg bg-brand-50 px-4 py-3 text-sm text-brand-800 ring-1 ring-brand-600/20">
+    <svg class="h-5 w-5 animate-spin text-brand-500" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+    <div>
+      <p class="font-medium">Analyzing product…</p>
+      <p class="text-brand-700">Extracting product information. This page will show the latest data once it's done — refresh in a few seconds.</p>
+    </div>
+  </div>
+<% elsif @latest_crawl_run&.status == "failed" %>
+  <div class="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-red-600/10">
+    <p class="font-medium">We couldn't extract product information.</p>
+    <p class="text-red-700">Please check the URL or try again later. (<%= @latest_crawl_run.error_message.presence || @latest_crawl_run.error_code %>)</p>
+  </div>
+<% end %>
+
+<div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+  <div class="lg:col-span-2 space-y-6">
+    <div class="card p-6">
+      <div class="grid grid-cols-2 gap-6 sm:grid-cols-4">
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Current Price</p>
+          <p class="mt-1 text-2xl font-bold text-slate-900">
+            <%= @product.current_price.present? ? number_to_currency(@product.current_price, unit: currency_symbol(@product.currency)) : "—" %>
+          </p>
+        </div>
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Lowest Price</p>
+          <p class="mt-1 text-2xl font-bold text-slate-900"><%= number_to_currency(@product.lowest_recorded_price, unit: currency_symbol(@product.currency)) if @product.lowest_recorded_price %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Highest Price</p>
+          <p class="mt-1 text-2xl font-bold text-slate-900"><%= number_to_currency(@product.highest_recorded_price, unit: currency_symbol(@product.currency)) if @product.highest_recorded_price %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Price Change</p>
+          <p class="mt-1 text-2xl font-bold <%= @product.price_drop? ? 'text-emerald-600' : 'text-slate-900' %>">
+            <%= @product.price_change_percent.present? ? number_to_percentage(@product.price_change_percent, precision: 1) : "—" %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <h2 class="text-sm font-semibold text-slate-900">Price History</h2>
+
+      <% if @price_history.size < 2 %>
+        <p class="mt-4 text-sm text-slate-500">Not enough data yet to draw a chart. Check back after the next price refresh.</p>
+      <% else %>
+        <svg viewBox="0 0 600 200" class="mt-4 h-48 w-full" preserveAspectRatio="none">
+          <polyline
+            fill="none"
+            stroke="#4f46e5"
+            stroke-width="2"
+            points="<%= price_history_chart_points(@price_history) %>"
+          />
+        </svg>
+        <div class="mt-2 flex justify-between text-xs text-slate-400">
+          <span><%= @price_history.first.checked_at.to_date %></span>
+          <span><%= @price_history.last.checked_at.to_date %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <div class="card p-6">
+      <h2 class="text-sm font-semibold text-slate-900">Tracking preferences</h2>
+
+      <%= form_with model: @tracked_product, url: product_path(@product), method: :patch, class: "mt-4 space-y-4" do |f| %>
+        <div>
+          <%= f.label :target_price, "Target price", class: "form-label" %>
+          <%= f.number_field :target_price, step: "0.01", min: 0, class: "form-input", placeholder: "e.g. 49.99" %>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <%= f.check_box :monitoring_enabled, class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-600" %>
+          <%= f.label :monitoring_enabled, "Monitoring enabled", class: "text-sm text-slate-700" %>
+        </div>
+
+        <%= f.submit "Save preferences", class: "btn-primary w-full" %>
+      <% end %>
+
+      <% if @tracked_product.target_reached? %>
+        <div class="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 ring-1 ring-emerald-600/20">
+          Target price reached
+        </div>
+      <% end %>
+    </div>
+
+    <div class="card p-6">
+      <h2 class="text-sm font-semibold text-slate-900">Availability</h2>
+      <span class="badge-slate mt-2"><%= @product.availability.humanize %></span>
+    </div>
+  </div>
+</div>

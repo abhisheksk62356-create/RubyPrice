@@ -1,0 +1,31 @@
+<% content_for :title, "New Comparison" %>
+
+<div class="mx-auto max-w-xl">
+  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Compare a product across stores</h1>
+  <p class="mt-1 text-sm text-slate-500">
+    Give this comparison a name (e.g. "iPhone 15 Pro 128GB"), then add the same product's
+    listing from each store you're tracking — Amazon, Temu, AliExpress, or anywhere else.
+  </p>
+
+  <div class="card mt-6 p-6">
+    <%= form_with model: @product_group, url: product_groups_path, class: "space-y-5" do |f| %>
+      <% if @product_group.errors.any? %>
+        <div class="rounded-lg bg-red-50 p-4 text-sm text-red-700 ring-1 ring-red-600/10">
+          <%= @product_group.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, "Comparison name", class: "form-label" %>
+        <%= f.text_field :name, required: true, autofocus: true, placeholder: "e.g. iPhone 15 Pro 128GB", class: "form-input" %>
+      </div>
+
+      <% if @preselected_tracked_product_id.present? %>
+        <input type="hidden" name="tracked_product_id" value="<%= @preselected_tracked_product_id %>">
+        <p class="text-xs text-slate-500">This will start the comparison with the product you came from.</p>
+      <% end %>
+
+      <%= f.submit "Create comparison", class: "btn-primary w-full" %>
+    <% end %>
+  </div>
+</div>

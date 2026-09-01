@@ -1,0 +1,41 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="flex items-center justify-between">
+  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+  <%= link_to "Add Product", new_product_path, class: "btn-primary" %>
+</div>
+
+<div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+  <% [
+    ["Tracked Products", @stats[:tracked_products]],
+    ["Price Drops", @stats[:price_drops]],
+    ["Price Checks", @stats[:price_checks]],
+    ["Lowest Price", @stats[:lowest_price].present? ? number_to_currency(@stats[:lowest_price]) : "—"]
+  ].each do |label, value| %>
+    <div class="card p-5">
+      <p class="text-sm font-medium text-slate-500"><%= label %></p>
+      <p class="mt-2 text-3xl font-bold text-slate-900"><%= value %></p>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-10">
+  <div class="flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-slate-900">Recently updated</h2>
+    <%= link_to "View all", products_path, class: "text-sm font-semibold text-brand-600 hover:text-brand-700" %>
+  </div>
+
+  <% if @recent_products.empty? %>
+    <%= render "shared/empty_state",
+          title: "No tracked products yet.",
+          body: "Add your first product to start monitoring prices.",
+          cta_label: "Add Product",
+          cta_path: new_product_path %>
+  <% else %>
+    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <% @recent_products.each do |product| %>
+        <%= render "products/product_card", product: product %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

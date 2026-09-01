@@ -1,0 +1,32 @@
+<% content_for :title, "Features" %>
+
+<%= render "shared/marketing_nav" %>
+
+<main class="mx-auto max-w-5xl px-6 py-20 lg:px-8">
+  <h1 class="text-4xl font-extrabold tracking-tight text-slate-900">Everything you need to track prices</h1>
+  <p class="mt-4 max-w-2xl text-lg text-slate-600">RubyPrice pairs a hardened Ruby crawler with a clean dashboard, so you always know when a price actually moves.</p>
+
+  <div class="mt-16 grid grid-cols-1 gap-10 sm:grid-cols-2">
+    <% [
+      ["Automated price extraction", "JSON-LD structured data first, then OpenGraph metadata, then HTML fallbacks — parsed with Nokogiri, never with brittle string matching."],
+      ["Price monitoring", "Enable or disable monitoring per product. Checks run on a schedule via Sidekiq so nothing blocks a web request."],
+      ["Price history", "Every price check is recorded, so you can see the lowest, highest, and first recorded price for any product."],
+      ["Target prices", "Set a target price and RubyPrice raises an alert the moment a tracked product reaches it."],
+      ["Product dashboard", "Search, filter, and sort your tracked products without ever loading your whole catalog into the browser."],
+      ["Data export", "A documented REST API returns your tracked products and price history as JSON."],
+      ["Secure accounts", "Passwords are hashed with bcrypt, sessions are protected, and logins are rate-limited."],
+      ["Background processing", "Crawling and price checks run asynchronously via Sidekiq and Redis, never inline in a request."]
+    ].each do |title, body| %>
+      <div>
+        <h3 class="text-lg font-semibold text-slate-900"><%= title %></h3>
+        <p class="mt-2 text-sm text-slate-600"><%= body %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-16">
+    <%= link_to "Start Tracking", signup_path, class: "btn-primary text-base px-6 py-3" %>
+  </div>
+</main>
+
+<%= render "shared/footer" %>

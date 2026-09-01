@@ -1,0 +1,127 @@
+<% content_for :title, "Track prices. Spot better deals." %>
+
+<%= render "shared/marketing_nav" %>
+
+<main>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-white">
+    <div class="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:px-8 lg:pt-28">
+      <div class="mx-auto max-w-3xl text-center">
+        <span class="badge-slate">Now tracking public product pages</span>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl">
+          Track prices without checking every store yourself.
+        </h1>
+        <p class="mt-6 text-lg leading-8 text-slate-600">
+          RubyPrice automatically collects product information from permitted public webpages and helps you monitor price changes over time.
+        </p>
+        <div class="mt-10 flex items-center justify-center gap-4">
+          <%= link_to "Start Tracking", signup_path, class: "btn-primary text-base px-6 py-3" %>
+          <a href="#how-it-works" class="btn-secondary text-base px-6 py-3">Explore Features</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="border-t border-slate-100 bg-slate-50 py-24">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <h2 class="text-center text-3xl font-bold tracking-tight text-slate-900">How It Works</h2>
+      <div class="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3">
+        <% [
+          ["1", "Add a product URL", "Paste the link to any permitted public product page you want to keep an eye on."],
+          ["2", "RubyPrice extracts the product data", "Our Ruby crawler fetches the page and parses structured data, OpenGraph tags, and pricing with Nokogiri."],
+          ["3", "Monitor price changes", "We check the price on a schedule, log every change, and alert you when it hits your target."]
+        ].each do |number, title, body| %>
+          <div class="card p-8">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white"><%= number %></div>
+            <h3 class="mt-5 text-lg font-semibold text-slate-900"><%= title %></h3>
+            <p class="mt-2 text-sm text-slate-600"><%= body %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-24">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <h2 class="text-center text-3xl font-bold tracking-tight text-slate-900">Features</h2>
+      <div class="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <% [
+          ["Automated price extraction", "JSON-LD, OpenGraph, and HTML fallbacks parsed by Nokogiri."],
+          ["Price monitoring", "Scheduled background checks via Sidekiq and Redis."],
+          ["Price history", "Every price point recorded so you can see the full trend."],
+          ["Target prices", "Get notified the moment a product hits your price."],
+          ["Product dashboard", "A clean, searchable view of everything you track."],
+          ["Data export", "Pull your tracked products and history via the REST API."],
+          ["Secure accounts", "Hashed passwords, rate-limited logins, CSRF protection."],
+          ["Background processing", "Crawling never blocks a web request."]
+        ].each do |title, body| %>
+          <div class="rounded-xl p-6 ring-1 ring-slate-200">
+            <h3 class="text-sm font-semibold text-slate-900"><%= title %></h3>
+            <p class="mt-2 text-sm text-slate-600"><%= body %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard preview -->
+  <section class="border-t border-slate-100 bg-slate-50 py-24">
+    <div class="mx-auto max-w-6xl px-6 lg:px-8">
+      <h2 class="text-center text-3xl font-bold tracking-tight text-slate-900">Dashboard Preview</h2>
+      <p class="mx-auto mt-3 max-w-xl text-center text-sm text-slate-600">A real-time view of every product you're tracking, with price history and drop alerts.</p>
+
+      <div class="mt-12 card overflow-hidden">
+        <div class="grid grid-cols-2 gap-4 border-b border-slate-100 p-6 sm:grid-cols-4">
+          <% [["Tracked Products", "24"], ["Price Drops", "7"], ["Price Checks", "186"], ["Lowest Price", "€19.99"]].each do |label, value| %>
+            <div>
+              <p class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= label %></p>
+              <p class="mt-1 text-2xl font-bold text-slate-900"><%= value %></p>
+            </div>
+          <% end %>
+        </div>
+        <div class="divide-y divide-slate-100">
+          <% [
+            ["Wireless Headphones", "shop.example.com", "€79.99", "-12.5%", true],
+            ["Standing Desk", "desks.example.com", "€249.00", "+3.2%", false],
+            ["Mechanical Keyboard", "keys.example.com", "€109.00", "-4.1%", true]
+          ].each do |name, domain, price, change, drop| %>
+            <div class="flex items-center justify-between px-6 py-4">
+              <div>
+                <p class="text-sm font-medium text-slate-900"><%= name %></p>
+                <p class="text-xs text-slate-500"><%= domain %></p>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-slate-900"><%= price %></span>
+                <span class="<%= drop ? 'badge-green' : 'badge-red' %>"><%= change %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-24">
+    <div class="mx-auto max-w-3xl px-6 lg:px-8">
+      <h2 class="text-center text-3xl font-bold tracking-tight text-slate-900">Frequently Asked Questions</h2>
+      <dl class="mt-12 space-y-8">
+        <% [
+          ["What kind of pages can RubyPrice track?", "Any permitted public product page. RubyPrice validates every URL, respects each site's robots.txt, and never accesses internal or restricted infrastructure."],
+          ["How often is the price checked?", "Tracked products are refreshed automatically on a schedule, and you can trigger a manual refresh at any time."],
+          ["Does RubyPrice bypass logins, paywalls, or CAPTCHAs?", "No. RubyPrice only reads publicly accessible product pages and never attempts to bypass authentication or bot protection."],
+          ["Is my data shared with other users?", "No. Your tracked products, target prices, and alerts are private to your account."]
+        ].each do |question, answer| %>
+          <div>
+            <dt class="text-base font-semibold text-slate-900"><%= question %></dt>
+            <dd class="mt-2 text-sm text-slate-600"><%= answer %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<%= render "shared/footer" %>
