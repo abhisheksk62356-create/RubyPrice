@@ -25,7 +25,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Redis-backed cache store
 gem "redis", "~> 5.3"
 # Background job processing
-gem "sidekiq", "~> 7.3"
+gem "sidekiq", "~> 8.1"
 
 # HTML/XML parsing for the extraction engine
 gem "nokogiri", "~> 1.19"
