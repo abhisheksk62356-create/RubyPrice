@@ -23,7 +23,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Redis-backed cache store
-gem "redis", "~> 5.3"
+gem "redis", "~> 6.0"
 # Background job processing
 gem "sidekiq", "~> 7.3"
 
