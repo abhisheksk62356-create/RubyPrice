@@ -326,8 +326,8 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (8.0.1)
+      activesupport (>= 7.2)
     sidekiq (7.3.9)
       base64
       connection_pool (>= 2.3.0)
@@ -405,7 +405,7 @@ DEPENDENCIES
   redis (~> 5.3)
   rspec-rails (~> 7.1)
   rubocop-rails-omakase
-  shoulda-matchers (~> 6.4)
+  shoulda-matchers (~> 8.0)
   sidekiq (~> 7.3)
   stimulus-rails
   tailwindcss-rails
