@@ -207,7 +207,9 @@ suitable for load testing rather than a specific claimed benchmark.
 
 ## Screenshots
 
-_Add screenshots of the landing page, dashboard, and product detail view here._
+### Landing Page
+
+![RubyPrice landing page hero](docs/screenshots/landing-hero.png)
 
 ## License
 
