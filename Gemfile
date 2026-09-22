@@ -30,7 +30,7 @@ gem "sidekiq", "~> 7.3"
 # HTML/XML parsing for the extraction engine
 gem "nokogiri", "~> 1.19"
 # HTTP client used by the crawler
-gem "faraday", "~> 2.10"
+gem "faraday", "~> 2.14"
 # Rack-based rate limiting / request throttling
 gem "rack-attack", "~> 6.7"
 # Pagination
